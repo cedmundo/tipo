@@ -7,16 +7,16 @@ for Bee and other projects.
 The language looks like this:
 ```
 # Function definition
-\I x = x
-\M x = x x
-\K x y = x
-\KI x y = y
+\x = x      # I
+\x = x x    # M
+\x y = x    # K
+\x y = y    # KI
 
 # Also can be defined as follows
-λI x = x
-λM x = x x
-λK x y = x
-λKI x y = y
+λx = x
+λx = x x
+λx y = x
+λx y = y
 ...
 
 # Type verifications
