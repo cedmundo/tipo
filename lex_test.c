@@ -77,9 +77,24 @@ static void test_next_token(void **state) {
     assert_memory_equal("λ", current.buf, current.len);
 }
 
+static void test_ignore_comments(void **state) {
+    (void) state;
+
+    const char *program = "# A line comment \nx";
+    struct token current = first_token(program);
+
+    current = next_token(current);
+    assert_int_equal(current.typ, TT_ID);
+    assert_int_equal(current.len, 1);
+    assert_int_equal(current.row, 2);
+    assert_int_equal(current.col, 1);
+    assert_memory_equal("x", current.buf, current.len);
+}
+
 int main() {
     const struct CMUnitTest tests[] = {
             cmocka_unit_test(test_next_token),
+            cmocka_unit_test(test_ignore_comments),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

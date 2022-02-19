@@ -32,6 +32,10 @@ static bool is_punct(uint32_t cp) {
     return cp == '(' || cp == ')' || cp == '\\' || cp == '.' || cp == '=' || cp == 0x03BB;
 }
 
+static bool is_comment_start(uint32_t cp) {
+    return cp == '#';
+}
+
 static bool is_alphanum(uint32_t cp) {
     return is_alpha(cp) || is_digit(cp);
 }
@@ -50,7 +54,7 @@ struct token next_token(struct token prev) {
     const char *base_buf = prev.buf + prev.len;
     const char *cur_buf = base_buf;
     uint32_t cur_cp = 0L;
-    uint8_t cur_inc = 0L;
+    uint8_t cur_inc;
 
     enum token_type cur_typ = TT_EOF;
     size_t cur_col = prev.col + prev.len;
@@ -69,6 +73,28 @@ struct token next_token(struct token prev) {
         cur_buf += cur_inc;
         cur_inc = dec_bytes_to_cp(cur_buf, &cur_cp);
         cur_col ++;
+    }
+
+    // ignore comments
+    if (is_comment_start(cur_cp)) {
+        base_buf += cur_inc;
+        cur_buf += cur_inc;
+
+        for(;;) {
+            if (cur_cp == '\n') {
+                base_buf += cur_inc;
+                cur_buf += cur_inc;
+                cur_inc = dec_bytes_to_cp(cur_buf, &cur_cp);
+                cur_row ++;
+                cur_col = 1L;
+                break;
+            }
+
+            base_buf += cur_inc;
+            cur_buf += cur_inc;
+            cur_inc = dec_bytes_to_cp(cur_buf, &cur_cp);
+            cur_col ++;
+        }
     }
 
     // collect and group the end of lines

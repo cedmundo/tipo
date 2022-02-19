@@ -11,6 +11,12 @@ The language looks like this:
 \M x = x x
 \K x y = x
 \KI x y = y
+
+# Also can be defined as follows
+λI x = x
+λM x = x x
+λK x y = x
+λKI x y = y
 ...
 
 # Type verifications
