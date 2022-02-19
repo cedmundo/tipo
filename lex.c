@@ -28,7 +28,7 @@ static bool is_eof(uint32_t cp) {
 }
 
 static bool is_punct(uint32_t cp) {
-    return cp == '(' || cp == ')' || cp == '\\' || cp == '.' || cp == 0x03BB;
+    return cp == '(' || cp == ')' || cp == '\\' || cp == '.' || cp == '=' || cp == 0x03BB;
 }
 
 static bool is_alphanum(uint32_t cp) {
@@ -92,7 +92,7 @@ struct token next_token(struct token prev) {
             cur_typ = TT_LPAR;
         } else if (*cur_buf == ')') {
             cur_typ = TT_RPAR;
-        } else if (*cur_buf == '.') {
+        } else if (*cur_buf == '.' || *cur_buf == '=') {
             cur_typ = TT_BODY;
         } else {
             assert(0 && "Undefined punctuation symbol");
@@ -102,10 +102,10 @@ struct token next_token(struct token prev) {
     }
 
     return (struct token) {
-            .typ = cur_typ,
-            .len = cur_len,
-            .buf = base_buf,
-            .col = cur_col,
-            .row = cur_row,
+        .typ = cur_typ,
+        .len = cur_len,
+        .buf = base_buf,
+        .col = cur_col,
+        .row = cur_row,
     };
 }
