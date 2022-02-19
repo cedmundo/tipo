@@ -3,6 +3,7 @@
 //
 
 #include "lex.h"
+#include "utf8.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -48,64 +49,89 @@ struct token first_token(const char *buf) {
 struct token next_token(struct token prev) {
     const char *base_buf = prev.buf + prev.len;
     const char *cur_buf = base_buf;
+    uint32_t cur_cp = 0L;
+    uint8_t cur_inc = 0L;
+
     enum token_type cur_typ = TT_EOF;
     size_t cur_col = prev.col + prev.len;
     size_t cur_row = prev.row;
     size_t cur_len = 0L;
 
+    cur_inc = dec_bytes_to_cp(cur_buf, &cur_cp);
+
     // remove spaces from token
-    while (is_space(*cur_buf)) {
-        base_buf ++;
-        cur_buf ++;
+    for (;;) {
+        if (!is_space(cur_cp)) {
+            break;
+        }
+
+        base_buf += cur_inc;
+        cur_buf += cur_inc;
+        cur_inc = dec_bytes_to_cp(cur_buf, &cur_cp);
         cur_col ++;
     }
 
     // collect and group the end of lines
-    if (is_eol(*cur_buf)) {
+    if (is_eol(cur_cp)) {
         cur_typ = TT_EOL;
-        cur_len = 1L;
-        if (*cur_buf == '\n') {
+        cur_len += cur_inc;
+        if (cur_cp == '\n') {
             cur_row ++;
             cur_col = 1L;
         }
 
-        while (is_eol(*(cur_buf + 1))) {
-            cur_buf ++;
-            cur_len ++;
-            if (*cur_buf == '\n') {
+        for (;;) {
+            uint32_t ahead_cp;
+            uint8_t ahead_inc = dec_bytes_to_cp(cur_buf + cur_inc, &ahead_cp);
+            if (!is_eol(ahead_cp)) {
+                break;
+            }
+
+            cur_buf += cur_inc;
+            cur_len += cur_inc;
+            cur_inc = ahead_inc;
+
+            if (cur_cp == '\n') {
                 cur_row ++;
                 cur_col = 1L;
             }
         }
-    } else if (is_alpha(*cur_buf)) {
+    } else if (is_alpha(cur_cp)) {
         cur_typ = TT_ID;
-        cur_len = 1L;
-        while (is_alphanum(*(cur_buf + 1))) {
-            cur_buf ++;
-            cur_len ++;
+        cur_len += cur_inc;
+        for (;;) {
+            uint32_t ahead_cp;
+            uint8_t ahead_inc = dec_bytes_to_cp(cur_buf + cur_inc, &ahead_cp);
+            if (!is_alphanum(ahead_cp)) {
+                break;
+            }
+
+            cur_buf += cur_inc;
+            cur_len += cur_inc;
+            cur_inc = ahead_inc;
         }
-    } else if (is_punct(*cur_buf)) {
-        cur_len = 1L;
-        if (*cur_buf == '\\') {
+    } else if (is_punct(cur_cp)) {
+        cur_len += cur_inc;
+        if (cur_cp == '\\' || cur_cp == 0x03BB) {
             cur_typ = TT_DEF;
-        } else if (*cur_buf == '(') {
+        } else if (cur_cp == '(') {
             cur_typ = TT_LPAR;
-        } else if (*cur_buf == ')') {
+        } else if (cur_cp == ')') {
             cur_typ = TT_RPAR;
-        } else if (*cur_buf == '.' || *cur_buf == '=') {
+        } else if (cur_cp == '.' || cur_cp == '=') {
             cur_typ = TT_BODY;
         } else {
             assert(0 && "Undefined punctuation symbol");
         }
-    } else if (!is_eof(*cur_buf)) {
+    } else if (!is_eof(cur_cp)) {
         lex_error("error: unexpected token (ascii=%d): '%c'", *cur_buf, *cur_buf);
     }
 
     return (struct token) {
-        .typ = cur_typ,
-        .len = cur_len,
-        .buf = base_buf,
-        .col = cur_col,
-        .row = cur_row,
+            .typ = cur_typ,
+            .len = cur_len,
+            .buf = base_buf,
+            .col = cur_col,
+            .row = cur_row,
     };
 }
