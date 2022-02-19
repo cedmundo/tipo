@@ -82,6 +82,8 @@ static void test_parse_abstraction(void **state) {
 }
 
 static void test_parse_application(void **state) {
+    (void) state;
+
     const char *src = "a b c";
     struct token start = first_token(src);
     struct token current = next_token(start);
@@ -112,6 +114,27 @@ static void test_parse_application(void **state) {
     assert_int_equal(right->typ, NT_ID);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
+}
+
+static void test_parse_application_inline(void **state) {
+    (void) state;
+
+    const char *src = "(\\x . x) y";
+    struct token start = first_token(src);
+    struct token current = next_token(start);
+    struct node *node, *left, *right;
+
+    node = parse_appl(&current);
+    assert_non_null(node);
+    assert_int_equal(node->typ, NT_APPLICATION);
+
+    left = node->left;
+    assert_non_null(left);
+    assert_int_equal(left->typ, NT_ABSTRACTION);
+
+    right = node->right;
+    assert_non_null(right);
+    assert_int_equal(right->typ, NT_ID);
 }
 
 static void test_parse_then(void **state) {
@@ -176,6 +199,7 @@ int main() {
             cmocka_unit_test(test_parse_precedence),
             cmocka_unit_test(test_parse_abstraction),
             cmocka_unit_test(test_parse_application),
+            cmocka_unit_test(test_parse_application_inline),
             cmocka_unit_test(test_parse_then),
             cmocka_unit_test(test_parse),
     };
