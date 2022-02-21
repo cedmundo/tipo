@@ -12,14 +12,14 @@ a = b
 # Function Application
 a b
 
-# Function definition
-x: x      # I
-x: x x    # M
-x y: x    # K
-x y: y    # KI
+# Lambda definition
+x => x      # I
+x => x x    # M
+x y => x    # K
+x y => y    # KI
 
 # Function binding
-f = x: x
+f = x => x
 f x
 
 # Shorthand for function binding
