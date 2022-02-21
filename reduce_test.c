@@ -19,7 +19,7 @@ static void test_substitution_id(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -30,7 +30,7 @@ static void test_substitution_id(void **state) {
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
 
-    assert_int_equal(substituted->typ, NT_ID);
+    assert_int_equal(substituted->typ, AST_TYPE_IDENTITY);
     assert_int_equal(substituted->token.len, 2);
     assert_memory_equal("bb", substituted->token.buf, 2);
 }
@@ -46,7 +46,7 @@ static void test_substitution_id_different_variables(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -57,7 +57,7 @@ static void test_substitution_id_different_variables(void **state) {
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
 
-    assert_int_equal(substituted->typ, NT_ID);
+    assert_int_equal(substituted->typ, AST_TYPE_IDENTITY);
     assert_int_equal(substituted->token.len, 1);
     assert_memory_equal("a", substituted->token.buf, 1);
 }
@@ -74,7 +74,7 @@ static void test_substitution_definition(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -84,7 +84,7 @@ static void test_substitution_definition(void **state) {
     struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
-    assert_int_equal(substituted->typ, NT_DEFINITION);
+    assert_int_equal(substituted->typ, AST_TYPE_DEFINITION);
 
     tmp0 = substituted->left;
     assert_non_null(tmp0);
@@ -107,7 +107,7 @@ static void test_substitution_abstraction(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -117,7 +117,7 @@ static void test_substitution_abstraction(void **state) {
     struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
-    assert_int_equal(substituted->typ, NT_ABSTRACTION);
+    assert_int_equal(substituted->typ, AST_TYPE_ABSTRACTION);
 
     tmp0 = substituted->left;
     assert_non_null(tmp0);
@@ -140,7 +140,7 @@ static void test_substitution_application(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -150,7 +150,7 @@ static void test_substitution_application(void **state) {
     struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
-    assert_int_equal(substituted->typ, NT_APPLICATION);
+    assert_int_equal(substituted->typ, AST_TYPE_APPLICATION);
 
     tmp0 = substituted->left;
     assert_non_null(tmp0);
@@ -173,7 +173,7 @@ static void test_substitution_descending(void **state) {
     struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
-            .typ = NT_ID,
+            .typ = AST_TYPE_IDENTITY,
             .token = {
                     .typ = TT_ID,
                     .buf = "bb",
@@ -183,7 +183,7 @@ static void test_substitution_descending(void **state) {
     struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
-    assert_int_equal(substituted->typ, NT_DEFINITION);
+    assert_int_equal(substituted->typ, AST_TYPE_DEFINITION);
 
     tmp0 = substituted->left;
     assert_non_null(tmp0);
@@ -191,16 +191,16 @@ static void test_substitution_descending(void **state) {
 
     tmp0 = substituted->right;
     assert_non_null(tmp0);
-    assert_int_equal(tmp0->typ, NT_APPLICATION);
+    assert_int_equal(tmp0->typ, AST_TYPE_APPLICATION);
 
     tmp1 = tmp0->left;
     assert_non_null(tmp1);
-    assert_int_equal(tmp1->typ, NT_ID);
+    assert_int_equal(tmp1->typ, AST_TYPE_IDENTITY);
     assert_memory_equal("bb", tmp1->token.buf, 2L);
 
     tmp1 = tmp0->right;
     assert_non_null(tmp1);
-    assert_int_equal(tmp1->typ, NT_ID);
+    assert_int_equal(tmp1->typ, AST_TYPE_IDENTITY);
     assert_memory_equal("b", tmp1->token.buf, 1L);
 }
 

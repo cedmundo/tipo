@@ -7,12 +7,12 @@
 #include "lex.h"
 
 enum ast_node_type {
-    NT_ID,
-    NT_DEFINITION,
-    NT_ABSTRACTION,
-    NT_APPLICATION,
-    NT_THEN,
-    NT_COUNT,
+    AST_TYPE_IDENTITY,
+    AST_TYPE_DEFINITION,
+    AST_TYPE_ABSTRACTION,
+    AST_TYPE_APPLICATION,
+    AST_TYPE_THEN,
+    AST_TYPE_COUNT,
 };
 
 struct ast_node {

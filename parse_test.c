@@ -19,7 +19,7 @@ static void test_parse_id(void **state) {
 
     node = parse_id(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_ID);
+    assert_int_equal(node->typ, AST_TYPE_IDENTITY);
     assert_int_equal(node->token.typ, TT_ID);
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("abc", node->token.buf, node->token.len);
@@ -27,7 +27,7 @@ static void test_parse_id(void **state) {
 
     node = parse_id(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_ID);
+    assert_int_equal(node->typ, AST_TYPE_IDENTITY);
     assert_int_equal(node->token.typ, TT_ID);
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("cba", node->token.buf, node->token.len);
@@ -44,7 +44,7 @@ static void test_parse_primary(void **state) {
 
     node = parse_primary_expr(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_ID);
+    assert_int_equal(node->typ, AST_TYPE_IDENTITY);
     assert_int_equal(node->token.typ, TT_ID);
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("abc", node->token.buf, node->token.len);
@@ -62,27 +62,27 @@ static void test_parse_application(void **state) {
 
     node = parse_application_expr(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_APPLICATION);
+    assert_int_equal(node->typ, AST_TYPE_APPLICATION);
 
     left = node->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_APPLICATION);
+    assert_int_equal(left->typ, AST_TYPE_APPLICATION);
 
     right = left->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("b", right->token.buf, right->token.len);
 
     left = left->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("a", left->token.buf, left->token.len);
 
     right = node->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
@@ -99,27 +99,27 @@ static void test_parse_abstraction(void **state) {
 
     node = parse_abstraction_expr(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_ABSTRACTION);
+    assert_int_equal(node->typ, AST_TYPE_ABSTRACTION);
 
     left = node->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("a", left->token.buf, left->token.len);
 
     right = node->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ABSTRACTION);
+    assert_int_equal(right->typ, AST_TYPE_ABSTRACTION);
 
     left = right->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("b", left->token.buf, left->token.len);
 
     right = right->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
@@ -136,27 +136,27 @@ static void test_parse_definition(void **state) {
 
     node = parse_definition_expr(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_DEFINITION);
+    assert_int_equal(node->typ, AST_TYPE_DEFINITION);
 
     left = node->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("a", left->token.buf, left->token.len);
 
     right = node->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_DEFINITION);
+    assert_int_equal(right->typ, AST_TYPE_DEFINITION);
 
     left = right->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("b", left->token.buf, left->token.len);
 
     right = right->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
@@ -173,27 +173,27 @@ static void test_parse_exprs(void **state) {
 
     node = parse_exprs(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_THEN);
+    assert_int_equal(node->typ, AST_TYPE_THEN);
 
     left = node->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_THEN);
+    assert_int_equal(left->typ, AST_TYPE_THEN);
 
     right = left->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("b", right->token.buf, right->token.len);
 
     left = left->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("a", left->token.buf, left->token.len);
 
     right = node->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
@@ -210,27 +210,27 @@ static void test_parse(void **state) {
 
     node = parse(&current);
     assert_non_null(node);
-    assert_int_equal(node->typ, NT_THEN);
+    assert_int_equal(node->typ, AST_TYPE_THEN);
 
     left = node->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_THEN);
+    assert_int_equal(left->typ, AST_TYPE_THEN);
 
     right = left->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("b", right->token.buf, right->token.len);
 
     left = left->left;
     assert_non_null(left);
-    assert_int_equal(left->typ, NT_ID);
+    assert_int_equal(left->typ, AST_TYPE_IDENTITY);
     assert_int_equal(left->token.len, 1);
     assert_memory_equal("a", left->token.buf, left->token.len);
 
     right = node->right;
     assert_non_null(right);
-    assert_int_equal(right->typ, NT_ID);
+    assert_int_equal(right->typ, AST_TYPE_IDENTITY);
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 

@@ -9,13 +9,13 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static_assert(NT_COUNT == 5, "Exhaustive ast_node type name table");
-static const char *node_type_name_table[] = {
-        [NT_ID] = "identity",
-        [NT_DEFINITION] = "definition",
-        [NT_ABSTRACTION] = "abstraction",
-        [NT_APPLICATION] = "application",
-        [NT_THEN] = "then",
+static_assert(AST_TYPE_COUNT == 5, "Exhaustive ast_node type name table");
+static const char *ast_node_type_name_table[] = {
+        [AST_TYPE_IDENTITY] = "identity",
+        [AST_TYPE_DEFINITION] = "definition",
+        [AST_TYPE_ABSTRACTION] = "abstraction",
+        [AST_TYPE_APPLICATION] = "application",
+        [AST_TYPE_THEN] = "then",
 };
 
 bool check_type(struct token *cur, enum token_type typ) {
@@ -45,7 +45,7 @@ struct ast_node *new_ast_node() {
 
 struct ast_node *new_ast_node_id(struct token token) {
     struct ast_node *node = new_ast_node();
-    node->typ = NT_ID;
+    node->typ = AST_TYPE_IDENTITY;
     node->token = token;
     return node;
 }
@@ -72,10 +72,10 @@ void free_ast_node(struct ast_node *node) {
 }
 
 void print_ast_node(struct ast_node *node, int level) {
-    if (node->typ == NT_DEFINITION || node->typ == NT_ABSTRACTION || node->typ == NT_ID) {
-        printf("%s `%.*s`\n", node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
+    if (node->typ == AST_TYPE_DEFINITION || node->typ == AST_TYPE_ABSTRACTION || node->typ == AST_TYPE_IDENTITY) {
+        printf("%s `%.*s`\n", ast_node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
     } else {
-        printf("%s at %lu:%lu\n", node_type_name_table[node->typ], node->token.row, node->token.col);
+        printf("%s at %lu:%lu\n", ast_node_type_name_table[node->typ], node->token.row, node->token.col);
     }
 
     if (node->left != NULL) {
@@ -103,7 +103,7 @@ struct ast_node *parse_exprs(struct token *cur) {
         if (check_type(cur, TT_EOL)) {
             struct token then_start = consume(cur);
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_ast_node_binary(then_start, NT_THEN, left, right);
+            left = new_ast_node_binary(then_start, AST_TYPE_THEN, left, right);
             continue;
         }
 
@@ -120,7 +120,7 @@ struct ast_node *parse_definition_expr(struct token *cur) {
         if (check_type(cur, TT_ASSIGN)) {
             struct token def_start = consume(cur); // '='
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_ast_node_binary(def_start, NT_DEFINITION, left, right);
+            left = new_ast_node_binary(def_start, AST_TYPE_DEFINITION, left, right);
             continue;
         }
 
@@ -137,7 +137,7 @@ struct ast_node *parse_abstraction_expr(struct token *cur) {
         if (check_type(cur, TT_LAMBDA)) {
             struct token lambda_start = consume(cur); // ':'
             struct ast_node *right = parse_abstraction_expr(cur);
-            left = new_ast_node_binary(lambda_start, NT_ABSTRACTION, left, right);
+            left = new_ast_node_binary(lambda_start, AST_TYPE_ABSTRACTION, left, right);
             continue;
         }
 
@@ -156,7 +156,7 @@ struct ast_node *parse_application_expr(struct token *cur) {
             break;
         }
 
-        left = new_ast_node_binary(left->token, NT_APPLICATION, left, right);
+        left = new_ast_node_binary(left->token, AST_TYPE_APPLICATION, left, right);
     }
 
     return left;
