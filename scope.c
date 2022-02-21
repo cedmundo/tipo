@@ -74,7 +74,7 @@ struct bind *get_bind(struct scope *scope, struct token lookup_name, bool recurs
     return NULL;
 }
 
-struct scope *def_bind(struct scope *scope, enum bind_type typ, struct token name, struct node *value) {
+struct scope *def_bind(struct scope *scope, enum bind_type typ, struct token name, struct ast_node *value) {
     struct bind *already_defined = get_bind(scope, name, false);
     if (already_defined != NULL) {
         struct scope *forked = fork_scope(scope);

@@ -5,7 +5,7 @@
 #ifndef TIPO_SCOPE_H
 #define TIPO_SCOPE_H
 #include "lex.h"
-struct node;
+struct ast_node;
 
 enum bind_type {
     BIND_ARG,
@@ -16,7 +16,7 @@ enum bind_type {
 struct bind {
     struct bind *next;
     struct token name;
-    struct node *value;
+    struct ast_node *value;
     enum bind_type typ;
 };
 
@@ -34,7 +34,7 @@ void scope_free(struct scope *scope);
 void scope_add_child(struct scope *parent, struct scope *child);
 
 struct scope *fork_scope(struct scope *parent);
-struct scope *def_bind(struct scope *scope, enum bind_type typ, struct token name, struct node *value);
+struct scope *def_bind(struct scope *scope, enum bind_type typ, struct token name, struct ast_node *value);
 struct bind *get_bind(struct scope *scope, struct token lookup_name, bool recursive);
 
 #endif //TIPO_SCOPE_H

@@ -15,7 +15,7 @@ static void test_parse_id(void **state) {
     struct token start = first_token(src);
     struct token current = next_token(start);
 
-    struct node *node;
+    struct ast_node *node;
 
     node = parse_id(&current);
     assert_non_null(node);
@@ -40,7 +40,7 @@ static void test_parse_primary(void **state) {
     const char *src = "(abc)";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node;
+    struct ast_node *node;
 
     node = parse_primary_expr(&current);
     assert_non_null(node);
@@ -58,7 +58,7 @@ static void test_parse_application(void **state) {
     const char *src = "a b c";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node, *left, *right;
+    struct ast_node *node, *left, *right;
 
     node = parse_application_expr(&current);
     assert_non_null(node);
@@ -95,7 +95,7 @@ static void test_parse_abstraction(void **state) {
     const char *src = "a => b => c";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node, *left, *right;
+    struct ast_node *node, *left, *right;
 
     node = parse_abstraction_expr(&current);
     assert_non_null(node);
@@ -132,7 +132,7 @@ static void test_parse_definition(void **state) {
     const char *src = "a = b = c";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node, *left, *right;
+    struct ast_node *node, *left, *right;
 
     node = parse_definition_expr(&current);
     assert_non_null(node);
@@ -169,7 +169,7 @@ static void test_parse_exprs(void **state) {
     const char *src = "a ; b ; c";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node, *left, *right;
+    struct ast_node *node, *left, *right;
 
     node = parse_exprs(&current);
     assert_non_null(node);
@@ -206,7 +206,7 @@ static void test_parse(void **state) {
     const char *src = "a ; b ; c";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *node, *left, *right;
+    struct ast_node *node, *left, *right;
 
     node = parse(&current);
     assert_non_null(node);

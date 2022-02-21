@@ -6,7 +6,7 @@
 #define TIPO_PARSE_H
 #include "lex.h"
 
-enum node_type {
+enum ast_node_type {
     NT_ID,
     NT_DEFINITION,
     NT_ABSTRACTION,
@@ -15,27 +15,27 @@ enum node_type {
     NT_COUNT,
 };
 
-struct node {
-    struct node *left;
-    struct node *right;
+struct ast_node {
+    struct ast_node *left;
+    struct ast_node *right;
     struct token token;
-    enum node_type typ;
+    enum ast_node_type typ;
 };
 
-struct node *new_node();
-struct node *new_id_node(struct token token);
-struct node *new_binary_node(struct token token, enum node_type typ, struct node *left, struct node *right);
+struct ast_node *new_node();
+struct ast_node *new_id_node(struct token token);
+struct ast_node *new_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right);
 
-void free_node(struct node *node);
-void print_node(struct node *node, int level);
+void free_node(struct ast_node *node);
+void print_node(struct ast_node *node, int level);
 
-struct node *parse(struct token *cur);
-struct node *parse_exprs(struct token *cur);
-struct node *parse_definition_expr(struct token *cur);
-struct node *parse_abstraction_expr(struct token *cur);
-struct node *parse_application_expr(struct token *cur);
-struct node *parse_primary_expr(struct token *cur);
-struct node *parse_id(struct token *cur);
+struct ast_node *parse(struct token *cur);
+struct ast_node *parse_exprs(struct token *cur);
+struct ast_node *parse_definition_expr(struct token *cur);
+struct ast_node *parse_abstraction_expr(struct token *cur);
+struct ast_node *parse_application_expr(struct token *cur);
+struct ast_node *parse_primary_expr(struct token *cur);
+struct ast_node *parse_id(struct token *cur);
 
 #define parse_error(t, msg, ...) do{ printf("%lu:%lu: " msg "\n", (t).row, (t).col, ##__VA_ARGS__); exit(1); }while(0)
 #endif //TIPO_PARSE_H

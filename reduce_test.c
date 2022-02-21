@@ -14,9 +14,9 @@ static void test_substitution_id(void **state) {
     const char *src = "a";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
+    struct ast_node *original = parse(&current);
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -26,7 +26,7 @@ static void test_substitution_id(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "a", &substitution);
+    struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
 
@@ -41,9 +41,9 @@ static void test_substitution_id_different_variables(void **state) {
     const char *src = "a";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
+    struct ast_node *original = parse(&current);
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -53,7 +53,7 @@ static void test_substitution_id_different_variables(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "b", &substitution);
+    struct ast_node *substituted = substitute(original, "b", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
 
@@ -68,10 +68,10 @@ static void test_substitution_definition(void **state) {
     const char *src = "a = a";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
-    struct node *tmp0, *tmp1;
+    struct ast_node *original = parse(&current);
+    struct ast_node *tmp0, *tmp1;
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -81,7 +81,7 @@ static void test_substitution_definition(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "a", &substitution);
+    struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
     assert_int_equal(substituted->typ, NT_DEFINITION);
@@ -101,10 +101,10 @@ static void test_substitution_abstraction(void **state) {
     const char *src = "a => a";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
-    struct node *tmp0, *tmp1;
+    struct ast_node *original = parse(&current);
+    struct ast_node *tmp0, *tmp1;
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -114,7 +114,7 @@ static void test_substitution_abstraction(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "a", &substitution);
+    struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
     assert_int_equal(substituted->typ, NT_ABSTRACTION);
@@ -134,10 +134,10 @@ static void test_substitution_application(void **state) {
     const char *src = "b a";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
-    struct node *tmp0, *tmp1;
+    struct ast_node *original = parse(&current);
+    struct ast_node *tmp0, *tmp1;
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -147,7 +147,7 @@ static void test_substitution_application(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "a", &substitution);
+    struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
     assert_int_equal(substituted->typ, NT_APPLICATION);
@@ -167,10 +167,10 @@ static void test_substitution_descending(void **state) {
     const char *src = "a = a b";
     struct token start = first_token(src);
     struct token current = next_token(start);
-    struct node *original = parse(&current);
-    struct node *tmp0, *tmp1;
+    struct ast_node *original = parse(&current);
+    struct ast_node *tmp0, *tmp1;
 
-    struct node substitution = {
+    struct ast_node substitution = {
             .right = NULL,
             .left = NULL,
             .typ = NT_ID,
@@ -180,7 +180,7 @@ static void test_substitution_descending(void **state) {
                     .len = 2L,
             }
     };
-    struct node *substituted = substitute(original, "a", &substitution);
+    struct ast_node *substituted = substitute(original, "a", &substitution);
     assert_non_null(substituted);
     assert_ptr_not_equal(substituted, original);
     assert_int_equal(substituted->typ, NT_DEFINITION);
