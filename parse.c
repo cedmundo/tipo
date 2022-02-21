@@ -72,7 +72,12 @@ void free_node(struct node *node) {
 }
 
 void print_node(struct node *node, int level) {
-    printf("%s `%.*s`\n", node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
+    if (node->typ == NT_DEFINITION || node->typ == NT_ABSTRACTION || node->typ == NT_ID) {
+        printf("%s `%.*s`\n", node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
+    } else {
+        printf("%s at %lu:%lu\n", node_type_name_table[node->typ], node->token.row, node->token.col);
+    }
+
     if (node->left != NULL) {
         printf("%*.s | L: ", level * 2, " ");
         print_node(node->left, level + 1);
