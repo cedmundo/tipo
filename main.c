@@ -2,7 +2,7 @@
 #include "parse.h"
 
 int main() {
-    const char *src = "λx = λy = e";
+    const char *src = "f = x : x";
     struct token token = first_token(src);
     struct token current = next_token(token);
     struct node *node = parse(&current);

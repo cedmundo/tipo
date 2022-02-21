@@ -29,7 +29,7 @@ static bool is_eof(uint32_t cp) {
 }
 
 static bool is_punct(uint32_t cp) {
-    return cp == '(' || cp == ')' || cp == '\\' || cp == '.' || cp == '=' || cp == 0x03BB;
+    return cp == '(' || cp == ')' || cp == ':' || cp == '=';
 }
 
 static bool is_comment_start(uint32_t cp) {
@@ -65,7 +65,7 @@ struct token next_token(struct token prev) {
 
     // remove spaces from token
     for (;;) {
-        if (!is_space(cur_cp)) {
+        if (!is_space(cur_cp) || cur_inc == 0) {
             break;
         }
 
@@ -109,7 +109,7 @@ struct token next_token(struct token prev) {
         for (;;) {
             uint32_t ahead_cp;
             uint8_t ahead_inc = dec_bytes_to_cp(cur_buf + cur_inc, &ahead_cp);
-            if (!is_eol(ahead_cp)) {
+            if (!is_eol(ahead_cp) || ahead_inc == 0) {
                 break;
             }
 
@@ -128,7 +128,7 @@ struct token next_token(struct token prev) {
         for (;;) {
             uint32_t ahead_cp;
             uint8_t ahead_inc = dec_bytes_to_cp(cur_buf + cur_inc, &ahead_cp);
-            if (!is_alphanum(ahead_cp)) {
+            if (!is_alphanum(ahead_cp) || ahead_inc == 0) {
                 break;
             }
 
@@ -138,14 +138,14 @@ struct token next_token(struct token prev) {
         }
     } else if (is_punct(cur_cp)) {
         cur_len += cur_inc;
-        if (cur_cp == '\\' || cur_cp == 0x03BB) {
-            cur_typ = TT_DEF;
-        } else if (cur_cp == '(') {
+        if (cur_cp == '(') {
             cur_typ = TT_LPAR;
         } else if (cur_cp == ')') {
             cur_typ = TT_RPAR;
-        } else if (cur_cp == '.' || cur_cp == '=') {
-            cur_typ = TT_BODY;
+        } else if (cur_cp == '=') {
+            cur_typ = TT_ASSIGN;
+        } else if (cur_cp == ':') {
+            cur_typ = TT_LAMBDA;
         } else {
             assert(0 && "Undefined punctuation symbol");
         }

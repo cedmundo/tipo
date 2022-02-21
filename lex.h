@@ -16,8 +16,8 @@ enum token_type {
     TT_ID,
     TT_LPAR,
     TT_RPAR,
-    TT_DEF,
-    TT_BODY,
+    TT_ASSIGN,
+    TT_LAMBDA,
 };
 
 struct token {

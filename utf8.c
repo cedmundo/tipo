@@ -64,5 +64,6 @@ uint8_t dec_bytes_to_cp(const char src[4], uint32_t *codepoint) {
         return 4;
     }
 
+    *codepoint = 0;
     return 0;
 }

@@ -6,17 +6,24 @@ for Bee and other projects.
 
 The language looks like this:
 ```
-# Function definition
-\x = x      # I
-\x = x x    # M
-\x y = x    # K
-\x y = y    # KI
+# Binding
+a = b
 
-# Also can be defined as follows
-λx = x
-λx = x x
-λx y = x
-λx y = y
+# Function Application
+a b
+
+# Function definition
+x: x      # I
+x: x x    # M
+x y: x    # K
+x y: y    # KI
+
+# Function binding
+f = x: x
+f x
+
+# Shorthand for function binding
+f x = x
 ...
 
 # Type verifications
