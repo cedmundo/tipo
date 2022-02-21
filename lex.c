@@ -29,7 +29,7 @@ static bool is_eof(uint32_t cp) {
 }
 
 static bool is_punct(uint32_t cp) {
-    return cp == '(' || cp == ')' || cp == ':' || cp == '=';
+    return cp == '(' || cp == ')' || cp == '=' || cp == '>';
 }
 
 static bool is_comment_start(uint32_t cp) {
@@ -144,8 +144,13 @@ struct token next_token(struct token prev) {
             cur_typ = TT_RPAR;
         } else if (cur_cp == '=') {
             cur_typ = TT_ASSIGN;
-        } else if (cur_cp == ':') {
-            cur_typ = TT_LAMBDA;
+
+            uint32_t ahead_cp;
+            uint8_t ahead_inc = dec_bytes_to_cp(cur_buf + cur_inc, &ahead_cp);
+            if (ahead_cp == '>') {
+                cur_typ = TT_LAMBDA;
+                cur_len += ahead_inc;
+            }
         } else {
             assert(0 && "Undefined punctuation symbol");
         }

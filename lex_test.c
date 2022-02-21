@@ -10,7 +10,7 @@
 static void test_next_token(void **state) {
     (void) state;
 
-    const char *program = "a abc ;; (\n) : =";
+    const char *program = "a abc ;; (\n) => =";
     struct token current = first_token(program);
 
     current = next_token(current);
@@ -57,16 +57,16 @@ static void test_next_token(void **state) {
 
     current = next_token(current);
     assert_int_equal(current.typ, TT_LAMBDA);
-    assert_int_equal(current.len, 1);
+    assert_int_equal(current.len, 2);
     assert_int_equal(current.row, 2);
     assert_int_equal(current.col, 4);
-    assert_memory_equal(":", current.buf, current.len);
+    assert_memory_equal("=>", current.buf, current.len);
 
     current = next_token(current);
     assert_int_equal(current.len, 1);
     assert_int_equal(current.typ, TT_ASSIGN);
     assert_int_equal(current.row, 2);
-    assert_int_equal(current.col, 6);
+    assert_int_equal(current.col, 7);
     assert_memory_equal("=", current.buf, current.len);
 }
 

@@ -90,7 +90,7 @@ static void test_parse_application(void **state) {
 static void test_parse_abstraction(void **state) {
     (void) state;
 
-    const char *src = "a : b : c";
+    const char *src = "a => b => c";
     struct token start = first_token(src);
     struct token current = next_token(start);
     struct node *node, *left, *right;
