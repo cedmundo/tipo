@@ -22,12 +22,12 @@ struct ast_node {
     enum ast_node_type typ;
 };
 
-struct ast_node *new_node();
-struct ast_node *new_id_node(struct token token);
-struct ast_node *new_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right);
+struct ast_node *new_ast_node();
+struct ast_node *new_ast_id_node(struct token token);
+struct ast_node *new_ast_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right);
 
-void free_node(struct ast_node *node);
-void print_node(struct ast_node *node, int level);
+void free_ast_node(struct ast_node *node);
+void print_ast_node(struct ast_node *node, int level);
 
 struct ast_node *parse(struct token *cur);
 struct ast_node *parse_exprs(struct token *cur);

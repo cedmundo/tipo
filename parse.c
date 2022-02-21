@@ -39,19 +39,19 @@ struct token expect(struct token *cur, enum token_type typ) {
 }
 
 
-struct ast_node *new_node() {
+struct ast_node *new_ast_node() {
     return calloc(1, sizeof(struct ast_node));
 }
 
-struct ast_node *new_id_node(struct token token) {
-    struct ast_node *node = new_node();
+struct ast_node *new_ast_id_node(struct token token) {
+    struct ast_node *node = new_ast_node();
     node->typ = NT_ID;
     node->token = token;
     return node;
 }
 
-struct ast_node *new_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right) {
-    struct ast_node *node = new_node();
+struct ast_node *new_ast_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right) {
+    struct ast_node *node = new_ast_node();
     node->typ = typ;
     node->token = token;
     node->left = left;
@@ -59,19 +59,19 @@ struct ast_node *new_binary_node(struct token token, enum ast_node_type typ, str
     return node;
 }
 
-void free_node(struct ast_node *node) {
+void free_ast_node(struct ast_node *node) {
     if (node->left != NULL) {
-        free_node(node->left);
+        free_ast_node(node->left);
     }
 
     if (node->right != NULL) {
-        free_node(node->right);
+        free_ast_node(node->right);
     }
 
     free(node);
 }
 
-void print_node(struct ast_node *node, int level) {
+void print_ast_node(struct ast_node *node, int level) {
     if (node->typ == NT_DEFINITION || node->typ == NT_ABSTRACTION || node->typ == NT_ID) {
         printf("%s `%.*s`\n", node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
     } else {
@@ -80,12 +80,12 @@ void print_node(struct ast_node *node, int level) {
 
     if (node->left != NULL) {
         printf("%*.s | L: ", level * 2, " ");
-        print_node(node->left, level + 1);
+        print_ast_node(node->left, level + 1);
     }
 
     if (node->right != NULL) {
         printf("%*.s | R: ", level * 2, " ");
-        print_node(node->right, level + 1);
+        print_ast_node(node->right, level + 1);
     }
 }
 
@@ -103,7 +103,7 @@ struct ast_node *parse_exprs(struct token *cur) {
         if (check_type(cur, TT_EOL)) {
             struct token then_start = consume(cur);
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_binary_node(then_start, NT_THEN, left, right);
+            left = new_ast_binary_node(then_start, NT_THEN, left, right);
             continue;
         }
 
@@ -120,7 +120,7 @@ struct ast_node *parse_definition_expr(struct token *cur) {
         if (check_type(cur, TT_ASSIGN)) {
             struct token def_start = consume(cur); // '='
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_binary_node(def_start, NT_DEFINITION, left, right);
+            left = new_ast_binary_node(def_start, NT_DEFINITION, left, right);
             continue;
         }
 
@@ -137,7 +137,7 @@ struct ast_node *parse_abstraction_expr(struct token *cur) {
         if (check_type(cur, TT_LAMBDA)) {
             struct token lambda_start = consume(cur); // ':'
             struct ast_node *right = parse_abstraction_expr(cur);
-            left = new_binary_node(lambda_start, NT_ABSTRACTION, left, right);
+            left = new_ast_binary_node(lambda_start, NT_ABSTRACTION, left, right);
             continue;
         }
 
@@ -156,7 +156,7 @@ struct ast_node *parse_application_expr(struct token *cur) {
             break;
         }
 
-        left = new_binary_node(left->token, NT_APPLICATION, left, right);
+        left = new_ast_binary_node(left->token, NT_APPLICATION, left, right);
     }
 
     return left;
@@ -176,7 +176,7 @@ struct ast_node *parse_primary_expr(struct token *cur) {
 
 struct ast_node *parse_id(struct token *cur) {
     if (check_type(cur, TT_ID)) {
-        return new_id_node(consume(cur));
+        return new_ast_id_node(consume(cur));
     }
 
     return NULL;

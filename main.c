@@ -6,6 +6,6 @@ int main() {
     struct token token = first_token(src);
     struct token current = next_token(token);
     struct ast_node *node = parse(&current);
-    print_node(node, 0);
+    print_ast_node(node, 0);
     return 0;
 }

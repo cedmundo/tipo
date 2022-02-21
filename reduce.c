@@ -9,7 +9,7 @@
 #include "parse.h"
 
 struct ast_node *deep_copy(const struct ast_node *node) {
-    struct ast_node *cpy = new_node();
+    struct ast_node *cpy = new_ast_node();
     memcpy(cpy, node, sizeof(struct ast_node));
 
     if (node->left != NULL) {

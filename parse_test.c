@@ -23,7 +23,7 @@ static void test_parse_id(void **state) {
     assert_int_equal(node->token.typ, TT_ID);
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("abc", node->token.buf, node->token.len);
-    free_node(node);
+    free_ast_node(node);
 
     node = parse_id(&current);
     assert_non_null(node);
@@ -31,7 +31,7 @@ static void test_parse_id(void **state) {
     assert_int_equal(node->token.typ, TT_ID);
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("cba", node->token.buf, node->token.len);
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse_primary(void **state) {
@@ -49,7 +49,7 @@ static void test_parse_primary(void **state) {
     assert_int_equal(node->token.len, 3);
     assert_memory_equal("abc", node->token.buf, node->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse_application(void **state) {
@@ -86,7 +86,7 @@ static void test_parse_application(void **state) {
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse_abstraction(void **state) {
@@ -123,7 +123,7 @@ static void test_parse_abstraction(void **state) {
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse_definition(void **state) {
@@ -160,7 +160,7 @@ static void test_parse_definition(void **state) {
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse_exprs(void **state) {
@@ -197,7 +197,7 @@ static void test_parse_exprs(void **state) {
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 static void test_parse(void **state) {
@@ -234,7 +234,7 @@ static void test_parse(void **state) {
     assert_int_equal(right->token.len, 1);
     assert_memory_equal("c", right->token.buf, right->token.len);
 
-    free_node(node);
+    free_ast_node(node);
 }
 
 int main() {
