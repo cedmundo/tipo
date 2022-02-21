@@ -53,6 +53,8 @@ static void test_parse_primary(void **state) {
 }
 
 static void test_parse_application(void **state) {
+    (void) state;
+
     const char *src = "a b c";
     struct token start = first_token(src);
     struct token current = next_token(start);

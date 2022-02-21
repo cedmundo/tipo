@@ -1,6 +1,7 @@
 //
 // Created by carlos on 2/18/22.
 //
+// NOLINTBEGIN(misc-no-recursion)
 #include "lex.h"
 #include "parse.h"
 
@@ -58,7 +59,6 @@ struct node *new_binary_node(struct token token, enum node_type typ, struct node
     return node;
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
 void free_node(struct node *node) {
     if (node->left != NULL) {
         free_node(node->left);
@@ -71,7 +71,6 @@ void free_node(struct node *node) {
     free(node);
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
 void print_node(struct node *node, int level) {
     printf("%s `%.*s`\n", node_type_name_table[node->typ], (int)node->token.len, node->token.buf);
     if (node->left != NULL) {
@@ -177,3 +176,4 @@ struct node *parse_id(struct token *cur) {
 
     return NULL;
 }
+// NOLINTEND(misc-no-recursion)
