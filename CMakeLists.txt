@@ -6,8 +6,8 @@ include(cmake/FetchCMocka.cmake)
 add_definitions("-Wall" "-g")
 
 # Sources and headers
-set(HEADERS utf8.h lex.h parse.h)
-set(SOURCES utf8.c lex.c parse.c)
+set(HEADERS utf8.h lex.h parse.h scope.h)
+set(SOURCES utf8.c lex.c parse.c scope.c)
 
 # Executable building
 add_executable(tipo ${HEADERS} ${SOURCES} main.c)
@@ -25,7 +25,12 @@ add_executable(parse_test utf8.h utf8.c lex.h lex.c parse.h parse.c parse_test.c
 target_compile_features(parse_test PRIVATE c_std_99)
 target_link_libraries(parse_test PRIVATE cmocka-static)
 
+add_executable(scope_test utf8.h utf8.c lex.h lex.c parse.h parse.c scope.h scope.c scope_test.c)
+target_compile_features(scope_test PRIVATE c_std_99)
+target_link_libraries(scope_test PRIVATE cmocka-static)
+
 enable_testing()
 add_test(NAME utf8_test COMMAND utf8_test)
 add_test(NAME lex_test COMMAND lex_test)
 add_test(NAME parse_test COMMAND parse_test)
+add_test(NAME scope_test COMMAND scope_test)
