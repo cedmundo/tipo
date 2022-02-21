@@ -43,14 +43,14 @@ struct ast_node *new_ast_node() {
     return calloc(1, sizeof(struct ast_node));
 }
 
-struct ast_node *new_ast_id_node(struct token token) {
+struct ast_node *new_ast_node_id(struct token token) {
     struct ast_node *node = new_ast_node();
     node->typ = NT_ID;
     node->token = token;
     return node;
 }
 
-struct ast_node *new_ast_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right) {
+struct ast_node *new_ast_node_binary(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right) {
     struct ast_node *node = new_ast_node();
     node->typ = typ;
     node->token = token;
@@ -103,7 +103,7 @@ struct ast_node *parse_exprs(struct token *cur) {
         if (check_type(cur, TT_EOL)) {
             struct token then_start = consume(cur);
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_ast_binary_node(then_start, NT_THEN, left, right);
+            left = new_ast_node_binary(then_start, NT_THEN, left, right);
             continue;
         }
 
@@ -120,7 +120,7 @@ struct ast_node *parse_definition_expr(struct token *cur) {
         if (check_type(cur, TT_ASSIGN)) {
             struct token def_start = consume(cur); // '='
             struct ast_node *right = parse_definition_expr(cur);
-            left = new_ast_binary_node(def_start, NT_DEFINITION, left, right);
+            left = new_ast_node_binary(def_start, NT_DEFINITION, left, right);
             continue;
         }
 
@@ -137,7 +137,7 @@ struct ast_node *parse_abstraction_expr(struct token *cur) {
         if (check_type(cur, TT_LAMBDA)) {
             struct token lambda_start = consume(cur); // ':'
             struct ast_node *right = parse_abstraction_expr(cur);
-            left = new_ast_binary_node(lambda_start, NT_ABSTRACTION, left, right);
+            left = new_ast_node_binary(lambda_start, NT_ABSTRACTION, left, right);
             continue;
         }
 
@@ -156,7 +156,7 @@ struct ast_node *parse_application_expr(struct token *cur) {
             break;
         }
 
-        left = new_ast_binary_node(left->token, NT_APPLICATION, left, right);
+        left = new_ast_node_binary(left->token, NT_APPLICATION, left, right);
     }
 
     return left;
@@ -176,7 +176,7 @@ struct ast_node *parse_primary_expr(struct token *cur) {
 
 struct ast_node *parse_id(struct token *cur) {
     if (check_type(cur, TT_ID)) {
-        return new_ast_id_node(consume(cur));
+        return new_ast_node_id(consume(cur));
     }
 
     return NULL;

@@ -23,8 +23,8 @@ struct ast_node {
 };
 
 struct ast_node *new_ast_node();
-struct ast_node *new_ast_id_node(struct token token);
-struct ast_node *new_ast_binary_node(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right);
+struct ast_node *new_ast_node_id(struct token token);
+struct ast_node *new_ast_node_binary(struct token token, enum ast_node_type typ, struct ast_node *left, struct ast_node *right);
 
 void free_ast_node(struct ast_node *node);
 void print_ast_node(struct ast_node *node, int level);
