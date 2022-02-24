@@ -13,7 +13,7 @@ void a() {
 int main() {
     a();
 
-    const char *src = "a b => w"; // a => b => c => d => e
+    const char *src = "a b c = w"; // a => b => c => d => e
     struct token token = first_token(src);
     struct token current = next_token(token);
 

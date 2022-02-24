@@ -30,7 +30,8 @@ struct ir_node *new_ir_node_id(const char *str, size_t len, size_t row, size_t c
     return node;
 }
 
-struct ir_node *new_ir_node_binary(enum ir_node_type typ, struct ir_node *left, struct ir_node *right, size_t row, size_t col) {
+struct ir_node *
+new_ir_node_binary(enum ir_node_type typ, struct ir_node *left, struct ir_node *right, size_t row, size_t col) {
     struct ir_node *node = new_ir_node();
     node->typ = typ;
     node->left = left;
@@ -97,7 +98,7 @@ void print_ir_node(struct ir_node *node, int level) {
 #define pop(s) do{ stack_##s[stack_top_##s--] = NULL; }while(0)
 #define empty(s) (stack_top_##s <= 0)
 
-struct ir_node *normalize_abstraction(struct ir_node *root) {
+struct ir_node *normalize_abstraction(struct ir_node *root, bool is_definition) {
     struct ir_node *stack_transversal[20] = {NULL};
     int32_t stack_top_transversal = 0L;
 
@@ -120,9 +121,9 @@ struct ir_node *normalize_abstraction(struct ir_node *root) {
         pop(transversal);
 
         if (build_cur == NULL) {
-            build_cur = new_ir_node_binary(IR_TYPE_ABSTRACTION, cur, NULL, 0, 0);
+            build_cur = new_ir_node_binary(is_definition ? IR_TYPE_DEFINITION : IR_TYPE_ABSTRACTION, cur, NULL, 0, 0);
             build_root = build_cur;
-        } else if (cur->typ == IR_TYPE_ABSTRACTION) {
+        } else if ((cur->typ == IR_TYPE_ABSTRACTION && !final_abstraction) || (cur->typ == IR_TYPE_DEFINITION && !final_abstraction)) {
             final_abstraction = true;
         } else if (cur->typ == IR_TYPE_IDENTITY && !final_abstraction) {
             build_cur->right = new_ir_node_binary(IR_TYPE_ABSTRACTION, cur, NULL, 0, 0);
@@ -139,21 +140,18 @@ struct ir_node *normalize_abstraction(struct ir_node *root) {
 }
 
 struct ir_node *new_ir_node_from_ast_node(struct ast_node *node) {
-    switch(node->typ) {
+    switch (node->typ) {
         case AST_TYPE_IDENTITY:
             return new_ir_node_id(node->token.buf, node->token.len, node->token.row, node->token.col);
         case AST_TYPE_DEFINITION:
-            return new_ir_node_binary(IR_TYPE_DEFINITION,
-                                      new_ir_node_from_ast_node(node->left),
-                                      new_ir_node_from_ast_node(node->right),
-                                      node->token.row,
-                                      node->token.col);
         case AST_TYPE_ABSTRACTION:
-            return normalize_abstraction(new_ir_node_binary(IR_TYPE_ABSTRACTION,
-                                      new_ir_node_from_ast_node(node->left),
-                                      new_ir_node_from_ast_node(node->right),
-                                      node->token.row,
-                                      node->token.col));
+            return normalize_abstraction(
+                    new_ir_node_binary(IR_TYPE_DEFINITION,
+                                       new_ir_node_from_ast_node(node->left),
+                                       new_ir_node_from_ast_node(node->right),
+                                       node->token.row,
+                                       node->token.col), node->typ == IR_TYPE_DEFINITION
+            );
         case AST_TYPE_APPLICATION:
             return new_ir_node_binary(IR_TYPE_APPLICATION,
                                       new_ir_node_from_ast_node(node->left),
