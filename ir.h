@@ -29,7 +29,7 @@ struct ir_node {
 struct ir_node *new_ir_node();
 struct ir_node *new_ir_node_id(const char *str, size_t len, size_t row, size_t col);
 struct ir_node *new_ir_node_binary(enum ir_node_type typ, struct ir_node *left, struct ir_node *right, size_t row, size_t col);
-struct ir_node *clone_ir_node(struct ir_node *node);
+struct ir_node *clone_ir_node(const struct ir_node *node);
 
 void free_ir_node(struct ir_node *node);
 void print_ir_node(struct ir_node *node, int level);

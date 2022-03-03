@@ -41,7 +41,7 @@ new_ir_node_binary(enum ir_node_type typ, struct ir_node *left, struct ir_node *
     return node;
 }
 
-struct ir_node *clone_ir_node(struct ir_node *node) {
+struct ir_node *clone_ir_node(const struct ir_node *node) {
     struct ir_node *new_node = new_ir_node();
     memcpy(new_node, node, sizeof(struct ir_node));
     if (new_node->left != NULL) {

@@ -4,10 +4,9 @@
 
 #ifndef TIPO_REDUCE_H
 #define TIPO_REDUCE_H
-struct ast_node;
+struct ir_node;
 
-struct ast_node *deep_copy(const struct ast_node *node);
-struct ast_node *substitute(const struct ast_node *into_expr, const char *name, struct ast_node *with_expr);
+struct ir_node *substitute(const struct ir_node *into_expr, const char *name, struct ir_node *with_expr);
 
-#define reduce_error(t, msg, ...) do{ printf("%lu:%lu: " msg "\n", (t).row, (t).col, ##__VA_ARGS__); exit(1); }while(0)
+#define reduce_error(r, c, msg, ...) do{ printf("%lu:%lu: " msg "\n", (r), (c), ##__VA_ARGS__); exit(1); }while(0)
 #endif //TIPO_REDUCE_H
