@@ -98,12 +98,18 @@ void print_ir_node(struct ir_node *node, int level) {
 #define pop(s) do{ stack_##s[stack_top_##s--] = NULL; }while(0)
 #define empty(s) (stack_top_##s <= 0)
 
-struct ir_node *normalize_abstraction(struct ir_node *root, bool is_definition) {
-    struct ir_node *stack_transversal[20] = {NULL};
+struct ir_node *normalize_abstraction(struct ir_node *root) {
+    struct ir_node *stack_transversal[100] = {NULL};
     int32_t stack_top_transversal = 0L;
+
+    if (root->left != NULL && root->left->typ == IR_TYPE_IDENTITY) {
+        // already normalized
+        return root;
+    }
 
     struct ir_node *build_cur = NULL;
     struct ir_node *build_root = NULL;
+    bool is_definition = root->typ == IR_TYPE_DEFINITION;
     bool final_abstraction = false;
 
     struct ir_node *cur = root;
@@ -121,12 +127,14 @@ struct ir_node *normalize_abstraction(struct ir_node *root, bool is_definition) 
         pop(transversal);
 
         if (build_cur == NULL) {
-            build_cur = new_ir_node_binary(is_definition ? IR_TYPE_DEFINITION : IR_TYPE_ABSTRACTION, cur, NULL, 0, 0);
+            build_cur = new_ir_node_binary(is_definition ? IR_TYPE_DEFINITION : IR_TYPE_ABSTRACTION, cur, NULL,
+                                           cur->row, cur->col);
             build_root = build_cur;
-        } else if ((cur->typ == IR_TYPE_ABSTRACTION && !final_abstraction) || (cur->typ == IR_TYPE_DEFINITION && !final_abstraction)) {
+        } else if ((cur->typ == IR_TYPE_ABSTRACTION && !final_abstraction) ||
+                   (cur->typ == IR_TYPE_DEFINITION && !final_abstraction)) {
             final_abstraction = true;
         } else if (cur->typ == IR_TYPE_IDENTITY && !final_abstraction) {
-            build_cur->right = new_ir_node_binary(IR_TYPE_ABSTRACTION, cur, NULL, 0, 0);
+            build_cur->right = new_ir_node_binary(IR_TYPE_ABSTRACTION, cur, NULL, cur->row, cur->col);
             build_cur = build_cur->right;
         } else if (cur->typ == IR_TYPE_IDENTITY && final_abstraction) {
             build_cur->right = cur;
@@ -146,11 +154,13 @@ struct ir_node *new_ir_node_from_ast_node(struct ast_node *node) {
         case AST_TYPE_DEFINITION:
         case AST_TYPE_ABSTRACTION:
             return normalize_abstraction(
-                    new_ir_node_binary(IR_TYPE_DEFINITION,
-                                       new_ir_node_from_ast_node(node->left),
-                                       new_ir_node_from_ast_node(node->right),
-                                       node->token.row,
-                                       node->token.col), node->typ == IR_TYPE_DEFINITION
+                    new_ir_node_binary(
+                            node->typ == AST_TYPE_DEFINITION ? IR_TYPE_DEFINITION : IR_TYPE_ABSTRACTION,
+                            new_ir_node_from_ast_node(node->left),
+                            new_ir_node_from_ast_node(node->right),
+                            node->token.row,
+                            node->token.col
+                    )
             );
         case AST_TYPE_APPLICATION:
             return new_ir_node_binary(IR_TYPE_APPLICATION,

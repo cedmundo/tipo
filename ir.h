@@ -34,6 +34,7 @@ struct ir_node *clone_ir_node(struct ir_node *node);
 void free_ir_node(struct ir_node *node);
 void print_ir_node(struct ir_node *node, int level);
 
+struct ir_node *normalize_abstraction(struct ir_node *root);
 struct ir_node *new_ir_node_from_ast_node(struct ast_node *node);
 
 #define ir_error(row, col, msg, ...) do{ printf("%lu:%lu: " msg "\n", (row), (col), ##__VA_ARGS__); exit(1); }while(0)
